@@ -1,0 +1,3 @@
+В данной статье автор представляет разработку web-приложения «Биржа труда» с использованием базы данных, а также взаимодействие между пользователем и сервером. В интернете имеется небольшое количество информационных средств, которые помогают найти работу или подобрать персонал для нее, что вызывает необходимость в создании таких ресурсов
+
+In this article the author presents the development of a web application «Labor Exchange» using a database, as well as interaction between the user and the server. There are a small number of information tools on the Internet that help to find a job or select staff for it, which makes it necessary to create such resources.

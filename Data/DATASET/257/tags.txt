@@ -1,0 +1,2 @@
+	
+ВЕБ-РАЗРАБОТКА, МЕТА-ФРЕЙМВОРКИ, ИЗОМОРФНЫЕ ВЕБ-ПРИЛОЖЕНИЯ, ПОЛЬЗОВАТЕЛЬСКИЕ ИНТЕРФЕЙСЫ, СЕРВЕРНЫЙ РЕНДЕРИНГ, АРХИТЕКТУРНЫЕ ПАТТЕРНЫ, WEB DEVELOPMENT, META-FRAMEWORKS, ISOMORPHIC WEB APPLICATIONS, USER INTERFACES, SERVER RENDERING, ARCHITECTURAL PATTERNS

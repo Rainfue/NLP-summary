@@ -1,0 +1,2 @@
+дистанционное образование; веб-приложение; single page
+application; AngularJS; SpringMVC; Spring; Hibernate; Java; JavaScript.

@@ -1,0 +1,2 @@
+	
+API, VK, PHP, PHOTO, MEDIA, METHOD, JSON, ЗАГРУЗКА, CURL, POST, ЗАПРОС, ОТПРАВКА, DOWNLOAD, REQUEST, SENDING

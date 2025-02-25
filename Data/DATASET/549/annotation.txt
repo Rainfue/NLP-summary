@@ -1,0 +1,3 @@
+Обозначена актуальность и сфера применения web-фреймворка React. Приведены его основные концепции и описана работа с браузером. Представлена технология AJAX. Описан способ управления состояниями DOM модели. Представлена схема работы технологии Webpack. Описано применение технологии Babel в рамках используемого web-фреймворка.
+
+The relevance and scope of the web-framework React is indicated. Its main concepts are presented and work with the browser is described. AJAX technology is presented. A method for managing the states of a DOM model is described. The scheme of work of technology Webpack is presented. The application of Babel technology within the framework of the web-framework used is described.

@@ -1,0 +1,1 @@
+геоинформационные системы, информационные системы, базы данных, базы геоданных, веб-ГИС, PostGIS, GeoServer, WMS, JavaScript, Leaflet, Bootstrap.

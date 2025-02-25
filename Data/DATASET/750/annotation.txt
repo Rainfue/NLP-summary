@@ -1,0 +1,5 @@
+	
+Данная работа посвящена анализу тенденций отмывания доходов и финансирования терроризма на крипторынке и разработке веб-приложения для графового анализа транзакций на платформе hedera hashgraph.
+
+This article is devoted to analyze crypto money laundering and terrorist financing trends and developing web-application for graph analysis of hedera hashgraph transactions.
+

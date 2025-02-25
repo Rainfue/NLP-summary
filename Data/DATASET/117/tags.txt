@@ -1,0 +1,1 @@
+ГОЛОСОВОЙ ПОМОЩНИК, PYTHON, МИКРОСЕРВИСНАЯ АРХИТЕКТУРА, РАСПОЗНАВАНИЕ РЕЧИ, ГЕНЕРАЦИЯ РЕЧИ, НЕЙРОННЫЕ СЕТИ, VOICE ASSISTANT, MICROSERVICE ARCHITECTURE, SPEECH RECOGNITION, SPEECH GENERATION, NEURAL NETWORK

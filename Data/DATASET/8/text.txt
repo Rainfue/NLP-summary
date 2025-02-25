@@ -1,0 +1,208 @@
+бюджет поставленной задачи. Поэтому остро стоит задача поиска универсального
+инструмента для разработки, и желательно, чтобы данный инструмент позволял без
+значительных доработок создавать приложения одновременно для двух платформ: iOS и
+Android.
+Важно, чтобы используемая технология не имела существенных ограничений при
+разработке в сравнении с технологиями, предназначенными для мобильных ОС. Например,
+компания Google рекомендует использовать язык программирования Java для разработки
+под Android, тогда как для платформы iOS используется язык программирования Swift,
+созданный компанией Apple.
+Таким образом, остро встаёт вопрос, под какую систему разрабатывать приложение.
+В идеале, конечно, это нужно делать для обеих платформ. Но разные инструменты
+разработки повышают трудозатраты и бюджет. Однако в последнее время появились
+универсальные библиотеки и среды разработки, которые позволяют разрабатывать
+приложения одновременно для обеих платформ. Одним из таких инструментов является
+фреймворк React Native.
+Под фреймворком (англицизм, неологизм от framework «остов, каркас, структура»)
+понимается набор заготовок, шаблонов для программной платформы, определяющий
+структуру программной системы, а также программное обеспечение, облегчающее
+разработку и объединение разных модулей программного проекта. Фреймворк React Native
+использует язык программирования JavaScript и позволяет с небольшими доработками
+адаптировать приложения под обе платформы: iOS и Android. В последнее время он
+набирает большую популярность1
+. На рис. 1 представлен восходящий поисковый тренд по
+ключевому запросу React Native в поисковой системе Google. Данный график показывает,
+что фреймворк опережает по популярности классические методы разработки мобильных
+приложений.
+Рис. 1. Частота поисковых запросов по теме мобильной разработки
+Fig. 1. The frequency of search queries on mobile development
+1 Gauri Pawar. Why is React Native the Future of Mobile App Development? Электронный ресурс:
+https://eluminoustechnologies.com/blog/2017/05/08/react-native-app-development/ (дата обращения 01.10.2018)
+Геоинформационные технологии и дистанционные методы исследования Земли
+417
+Фреймворк React Native использует язык программирования JavaScript. Данный язык
+программирования в настоящее время является самым популярным среди разработчиков1
+.
+Он с большим отрывом опережает классические языки программирования для мобильной
+разработки, такие как Java для Android и Swift для платформы iOS (рис. 2).
+В данной статье приведён пример разработки геолокационного приложения для
+мобильных устройств. Для разработки используется фреймворк React Native.
+Рис. 2. Количество проектов на ресурсе GitHub по языкам программирования
+Fig. 2. Number of GitHub projects on programming languages
+МАТЕРИАЛЫ И МЕТОДЫ ИССЛЕДОВАНИЯ
+Установка необходимых компонент
+Целью работы является разработка геолокационного приложения для ознакомления с
+технологией React Native. Приложение будет отображать пройденный маршрут на карте.
+На первый взгляд может показаться, что это достаточно простое приложение, но для
+ознакомительных целей и апробации технологии React Native для разработки
+геоинформационных приложений этого вполне достаточно.
+Для начала нужно установить библиотеку для работы с картами следующей
+командой:
+npm install react-native-maps –save
+1 Octoverse. The State of the Octoverse 2017. Электронный ресурс: https://octoverse.github.com (дата обращения
+01.10.2018)
+Geoinformation technologies and remote methods of Earth research
+418
+Получение обновлённых координат
+После установки компонента карт перейдем к программированию приложения. Для
+начала создадим конструктор, который будет хранить первоначальное состояние
+приложения:
+constructor(props) {
+ super(props);
+ this.state = {
+ latitude: LATITUDE,
+ longitude: LONGITUDE,
+ routeCoordinates: [],
+ distanceTravelled: 0,
+ prevLatLng: {},
+ coordinate: new AnimatedRegion({
+ latitude: LATITUDE,
+ longitude: LONGITUDE
+ })
+ };
+}
+Каждый раз, когда пользователь перемещается, необходимо обновлять координаты
+местоположения:
+componentDidMount() {
+ this.watchID = navigator.geolocation.watchPosition(
+ position => {
+ const { coordinate, routeCoordinates, distanceTravelled } =
+this.state;
+ const { latitude, longitude } = position.coords;
+
+ const newCoordinate = {
+ latitude,
+ longitude
+ };
+ if (Platform.OS === "android") {
+ if (this.marker) {
+ this.marker._component.animateMarkerToCoordinate(
+ newCoordinate,
+ 500
+ );
+ }
+ } else {
+ coordinate.timing(newCoordinate).start();
+ }
+ this.setState({
+ latitude,
+ longitude,
+ routeCoordinates: routeCoordinates.concat([newCoordinate]),
+ distanceTravelled:
+ distanceTravelled + this.calcDistance(newCoordinate),
+ prevLatLng: newCoordinate
+ });
+ },
+ error => console.log(error),
+ { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+ );
+}
+Геоинформационные технологии и дистанционные методы исследования Земли
+419
+Метод watchPosition предоставляет обновлённые координаты в том случае, если
+пользователь перемещается. Переменные latitude и longitude содержат данные
+широты и долготы. Создадим переменную newCoordinate для хранения обновлённых
+координат; эти координаты будем использовать для маркера на карте. Платформы Anroid
+и iOS отличаются в том, как получать обновлённые координаты, поэтому используем
+условный оператор:
+if (Platform.OS === "android") {
+ if (this.marker) {
+ this.marker._component.animateMarkerToCoordinate(
+ newCoordinate,
+ 500
+ );
+ }
+} else {
+ coordinate.timing(newCoordinate).start();
+}
+После этого обновим состояние нашего приложения:
+this.setState({
+ latitude,
+ longitude,
+ routeCoordinates: routeCoordinates.concat([newCoordinate]),
+ distanceTravelled: distanceTravelled + this.calcDistance(newCoordinate),
+ prevLatLng: newCoordinate
+});
+Расчёт пройденного расстояния
+Для хранения пройденного расстояния будем использовать переменную
+distanceTravelled. Чтобы её рассчитать, создадим функцию calcDistance, которая
+будет принимать параметр newLatLng, хранящий новые координаты, и prevLatLng,
+хранящий предыдущие координаты:
+calcDistance = newLatLng => {
+ const { prevLatLng } = this.state;
+ return haversine(prevLatLng, newLatLng) || 0;
+};
+Из-за кривизны Земли для расчёта расстояния между двумя точками мы
+воспользовались формулой гаверсинуса [Korn, Korn, 2000]. Чтобы данная формула была
+доступна при разработке, нужно установить необходимую библиотеку:
+npm install haversine
+Отображение пройденного маршрута на карте
+Для построения области карты, содержащей пройденный маршрут, создадим
+функцию getMapRegion:
+getMapRegion = () => ({
+ latitude: this.state.latitude,
+ longitude: this.state.longitude,
+ latitudeDelta: LATITUDE_DELTA,
+ longitudeDelta: LONGITUDE_DELTA
+});
+Geoinformation technologies and remote methods of Earth research
+420
+Далее отобразим маршрут на карте:
+<MapView
+ style={styles.map}
+ showUserLocation
+ followUserLocation
+ loadingEnabled
+ region={this.getMapRegion()}
+>
+ <Polyline coordinates={this.state.routeCoordinates} strokeWidth={5} />
+ <Marker.Animated
+ ref={marker => {
+ this.marker = marker;
+ }}
+ coordinate={this.state.coordinate}
+ />
+</MapView>
+В данном случае мы использовали функцию Polyline из библиотеки Google Maps,
+чтобы отобразить маршрут на карте. Эта функция имеет свойства coordinate, в которых
+хранятся координаты. С помощью свойства strokeWidth мы можем задать толщину
+линии маршрута. Для отображения маркера текущего местоположения используется
+компонент Marker.Animated.
+Отображение пройденного расстояния
+Для того, чтобы показать пройденное пользователем расстояние, создадим элемент
+View с соответствующими стилями:
+Геоинформационные технологии и дистанционные методы исследования Земли
+421
+<View style={styles.buttonContainer}>
+ <TouchableOpacity style={[styles.bubble, styles.button]}>
+ <Text style={styles.bottomBarContent}>
+ {parseFloat(this.state.distanceTravelled).toFixed(2)} km
+ </Text>
+ </TouchableOpacity>
+</View>
+Данный элемент представляет собой визуальный индикатор с числовым
+отображением пройденного расстоние Визуальный элемент отображения пройденного расстояния
+ Visual element displaying the traveled distance
+ Интерфейс приложения
+. Application interface
+Geoinformation technologies and remote methods of Earth research
+422
+Для того, чтобы протестировать приложение, можно воспользоваться симулятором
+iOS, который входит в набор разработчика Xcode, распространяемого бесплатно компанией
+Apple. Для этого в настройках симулятора надо войти в меню Debug > Location > Freeway
+Drive. Таким образом, можно смоделировать реальное устройство с включённой функцией
+GPS и проверить работу нашего приложения без необходимости установки приложения на
+реальное устройство.
+В случае платформы Android функционал имитации движения устройства не
+предусмотрен в симуляторе, то есть нужно тестировать приложение на реальном
+устройстве.

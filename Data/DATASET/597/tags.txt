@@ -1,0 +1,2 @@
+	
+JAVA, ПРОИЗВОДИТЕЛЬНОСТЬ, УПРАВЛЕНИЕ ПАМЯТЬЮ, СБОРЩИК МУСОРА (GC), МНОГОПОТОЧНОСТЬ, JVM, УТЕЧКИ ПАМЯТИ, МЕТРИКИ ПРОИЗВОДИТЕЛЬНОСТИ, НАСТРОЙКИ JVM, ИНСТРУМЕНТЫ ПРОФИЛИРОВАНИЯ, PERFORMANCE, MEMORY MANAGEMENT, GARBAGE COLLECTOR (GC), MULTITHREADING, MEMORY LEAKS, PERFORMANCE METRICS, JVM SETTINGS, PROFILING TOOLS

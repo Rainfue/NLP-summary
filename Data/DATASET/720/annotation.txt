@@ -1,0 +1,4 @@
+	
+Если веб-разработчик занимался разработкой React, то ему наверняка приходилось сталкиваться с такими терминами, как HOC и Render Props. В данной статье будут разобраны оба этих паттерна, чтобы понять, зачем они нужны, и то, как можно их правильно использовать для создания приложений с лучшей отзывчивостью.
+
+If a web developer was developing React, he probably had to deal with such terms as HOC and Render Props. This article will look at both of these patterns to understand why they are needed and how they can be used correctly to create applications with better responsiveness.

@@ -1,0 +1,1 @@
+МИКРОСЕРВИСНАЯ АРХИТЕКТУРА, МАСШТАБИРУЕМЫЕ СИСТЕМЫ, MICROSERVICE ARCHITECTURE, SCALABLE SYSTEMS

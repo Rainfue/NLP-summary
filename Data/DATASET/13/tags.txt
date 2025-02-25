@@ -1,0 +1,1 @@
+TYPESCRIPT, PRETTIER, GIT, GIT HOOKS, LINT-STAGED, HUSKY, КОД-СТИЛЬ, АВТОМАТИЧЕСКОЕ ФОРМАТИРОВАНИЕ КОДА, CODE-STYLE, AUTOMATIC CODE FORMATTING

@@ -1,0 +1,2 @@
+Server Side Rendering, SSR, HTML-документ, SEO,
+производительность, JavaScript, клиент, сервер.

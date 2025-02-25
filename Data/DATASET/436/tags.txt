@@ -1,0 +1,3 @@
+цифровая трансформация, медицина, медицинские информационные
+системы, интернет вещей, IoMT, Javascript, API, WebSocket API, Node JS, React JS, React
+Native, Create React App.

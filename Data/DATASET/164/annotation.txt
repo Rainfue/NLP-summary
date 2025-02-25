@@ -1,0 +1,3 @@
+В статье рассмотрена среда для автоматизации работы сервера и запуска веб-приложений Node.JS. Показан основной её конкурент, выявлены преимущества и недостатки обеих конкурирующих платформ. Рассмотрены две модели мультипроцессорной обработки (MPM) поступающих запросов и асинхронный процесс.
+
+The article describes the environment for automating the server and launching Node.JS web applications. Its main competitor is shown, advantages and disadvantages of both competing platforms are revealed. Two models of multiprocessor processing (MPM) of incoming requests and an asynchronous process are considered.

@@ -1,0 +1,4 @@
+	
+В рамках исследования рассматриваются основные этапы разработки, структура проекта, преимущества и недостатки каждого подхода. Производится оценка эффективности использования React для создания современных веб-приложений.
+
+The study examines the main stages of development, the structure of the project, the advantages and disadvantages of each approach. The effectiveness of using React to create modern web applications is evaluated

@@ -1,0 +1,1 @@
+КЛАССИФИКАЦИЯ ИЗОБРАЖЕНИЙ, ЛОКАЛИЗАЦИЯ ОБЪЕКТОВ, СЕМАНТИЧЕСКАЯ СЕГМЕНТАЦИЯ, КОМПЬЮТЕРНОЕ ЗРЕНИЕ, IMAGE CLASSIFICATION, LOCALIZATION OF OBJECTS, SEMANTIC SEGMENTATION, COMPUTER VISION

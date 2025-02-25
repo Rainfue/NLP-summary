@@ -1,0 +1,1 @@
+СТАТИЧЕСКАЯ СТРАНИЦА, ДИНАМИЧЕСКАЯ СТРАНИЦА, ОДНОСТРАНИЧНОЕ ВЕБ-ПРИЛОЖЕНИЕ, SPA, SSR, REACT.JS, VUE.JS, ANGULAR, SVELTE, NEXT.JS, NUXT.JS, ANGULAR UNIVERSAL

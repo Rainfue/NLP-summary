@@ -1,0 +1,2 @@
+	
+ЯЗЫК PYTHON, БИБЛИОТЕКА DJANGO, MODEL-VIEW-TEMPLATE (MVT), URL DISPATCHER, VIEW, MODEL, TEMPLATE, ШАБЛОНИЗАТОР, ВСТРОЕННЫЙ АДМИНИСТРАТИВНЫЙ САЙТ, СГЕНЕРИРОВАННЫЙ HTML-КОД

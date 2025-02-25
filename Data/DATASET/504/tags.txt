@@ -1,0 +1,2 @@
+	
+JAVA, СЕРВЕРНАЯ РАЗРАБОТКА, БЕКЕНД-РАЗРАБОТКА, ФРЕЙМВОРКИ, SPRING BOOT, HIBERNATE, APACHE STRUTS, JHIPSTER, APACHE KAFKA, ОБЪЕКТНО-РЕЛЯЦИОННОЕ ОТОБРАЖЕНИЕ, MODEL-VIEW-CONTROLLER, ПРИЛОЖЕНИЯ С ПОЛНЫМ СТЕКОМ, МИКРОСЕРВИСЫ, ВЕБ-ПРИЛОЖЕНИЯ

@@ -1,0 +1,127 @@
+Биржа труда – это специализированное место, которое выступает посредником между 
+предприятиями и индивидуальными предпринимателями с одной стороны и гражданами без работы (безработными) или работниками, которые ищут новую работу с другой стороны.
+Переходим к физическому проектированию базы данных. 
+Используя утилиту phpMyAdmin, была создана физическая схем.
+Весь доступ к нашей базе данных происходит при помощи PDO (PHP Data Objects). PHP 
+Data Objects — это расширение PHP, предоставляющее разработчику универсальный интерфейс для 
+доступа к различным базам данных. PDO не использует абстрактные слои для подключения к базе 
+данных, а использует собственные «родные» драйверы для разных баз данных, что обеспечивает 
+высокую производительность. В настоящее время существуют драйвера для PDO практически для 
+всех известных СУБД и интерфейсов. С PDO вы также можете работать с несколькими базами данных одновременно. Чтобы работать с PDO в PHP, нам сначала нужно подключить его к нашей базе 
+данных:
+Листинг 1. Подключение к базе данных.
+$host = 'localhost';
+$db = 'exchange';
+$user = 'root';
+$password = '';
+$db = new PDO(«mysql:host=$host; dbname=$db», $user, $password);
+Конец листинга 1.
+Далее объект будет переведен в $db, благодаря чему мы сможем работать с нашей базой 
+данных.
+PDO позволяет нам работать с данными: просматривать таблицы, изменять их значения, 
+удалять, вставлять данные. Для этого мы будем использовать HTML, CSS и различные фреймворки, такие как Jquery и Ajax. jQuery — это библиотека JavaScript, содержащая готовые функции 
+языка JavaScript, все операции jQuery выполняются кодом JavaScript.
+Чтобы сделать добавление в базу данных, нужно воспользоваться командой insert. Данная 
+команда работает следующим образом: скрипт принимает введённые данные с формы, после чего 
+с помощью функции идет передача данных в саму БД. Пример добавления данных, а именно добавление новой должности листинги 2, 3.
+Листинг 2. Заполнение формы для новой должности.
+<form action=«InsertPost.php» method=«post»>
+ Наименование: <input class=«add» type=«text» name=«title» placeholder=«название»
+/> <br>
+ <input class=«add» type=«submit» value=«Добавить»>
+ <input class=«add» type=«reset» name=«reset» value=«Сброс»>
+ </form>
+Конец листинга 2.
+Листинг 3. Добавление новой должности.
+$host = 'localhost';
+ $db = 'exchange';
+ $user = 'root';
+ $password = '';
+ $db = new PDO(«mysql:host=$host; dbname=$db», $user, $password);
+ $title = $_POST[«title»];
+ $sql2 = «INSERT INTO post (title) VALUES ('$title')»;
+ if (isset($_POST[«title»])) {
+$db->query($sql2);
+header(«Location: Post.php»);
+ }
+Конец листинга 3.
+Для поиска данных используется команда select. Пример работы функции листинг 4. 
+Функция выводит данные, если все данные соответствуют о записи на эту вакансию людей.
+Листинг 4. Работа функции select.
+ $host = 'localhost';
+ $db = 'exchange';
+ $user = 'root';
+ $password = '';
+ $db = new PDO(«mysql:host=$host; dbname=$db», $user, $password);
+ $sql = «select vacancy.id_vacancy, post.title, vacancy.schedule, vacancy.demand, vacancy.wages from applicant, record, vacancy, post where vacancy.id_record=record.id_record and 
+vacancy.id_applicant=applicant.id_applicant and vacancy.id_post=post.id_post»;
+ $res = $db->query($sql);
+ $num_results = $res->rowCount();
+echo '<table align=«center» border=1>';
+ echo '<tr><th>Номер вакансии</th>' .
+ '<th>Должность</th>' .
+ '<th>График работы</th>' .
+ '<th>Требования</th>' .
+ '<th>Зарплата</th>' .
+ '<tr>';
+ $result = $res->FetchAll(PDO::FETCH_NUM);
+ foreach ($result as $row) {
+ echo «<tr><td>$row[0]</td> <td>$row[1]</td> <td>$row[2]</td> <td>$row[3]</td> 
+<td>$row[4]</td> </tr>»;
+ }
+Конец листинга 4. 
+Для запросов к базе данных использовались функции языка JavaScript и AJAX-запросы. 
+Демонстрация работы отображена в листингах 5, 6. Функция принимает должность, по которой 
+нужно вывести информацию, после происходит AJAX-запрос требуемому PHP-скрипту, который 
+уже выводит информацию. 
+Листинг 5. AJAX-запрос на поиск данных.
+$(function () {
+ $(«form»).submit(function (event) {
+ event.preventDefault();
+ let data = new FormData();
+ data.append('search', $(«input[type='text']»).val());
+ $.ajax({
+ data: data,
+ type: 'POST',
+ url: 'Search.php',
+ contentType: false,
+ processData: false,
+ beforeSend: function () {
+ $(«#btn»).prop(«disabled», true);
+ },
+ success: function (data) {
+ if (!data) {
+ $(«.show»).html('Данной вакансии нет');
+ }
+ else {
+ $(«.show»).html(data);
+ }
+ },
+ complete: function () {
+ $(«#btn»).prop(«disabled», false);
+ },
+ });
+ });
+});
+Конец листинга 5.
+Листинг 6. PHP-скрипт для вывода информации.
+$db = mysqli_connect('localhost', 'root', '', 'exchange');
+$searchV = trim($_POST[«search»]);
+$sql = «select * from vacancy, post where title Like '» . $searchV . «' and vacancy.id_post=post.id_post»;
+$result = mysqli_query($db, $sql);
+for ($i = 0; $i < mysqli_num_rows($result); $i++) {
+ $row = mysqli_fetch_array($result);
+ echo «Должность: « . $row[«title»] . «<br>»;
+ echo «График работы: « . $row[«schedule»] . «<br>»;
+ echo «Требования: « . $row[«demand»] . «<br>»;
+ echo «Зарплата: « . $row[«wages»] . «<br>»;
+}
+Конец листинга 6.
+Рассмотрим функционал информационной системы и проверим реализацию пользовательского интерфейса.
+Сначала пользователи попадают на главную страницу, где есть 5 разных вкладок, поиск 
+вакансии по названию, контактная информация, дополнительная информация. Пользователь может ввести название вакансии и, если нет такой вакансии будет соответствующее сообщение. Если 
+же вакансия найдена, то будет информация об этой вакансии.
+Переходя на нужные вкладки, можно заполнять или удалять информацию в соответствии с 
+поставленной задачей. Например, рассмотрим страницу «Добавление новой записи» (Рисунок 4). 
+Таким образом, в данной статье рассмотрено построение физической модели базы данных, 
+спроектирована структура сайта, реализовано и протестировано web-приложение.

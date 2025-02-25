@@ -1,0 +1,3 @@
+Данная работа посвящена исследованию технологии React native для разработки мобильных приложений для операционных систем Android и iOS. В качестве примера рассматривается мобильное приложение «Портфолио студента КнАГУ».
+
+This paper is devoted to the study of technology React native for the development of mobile applications for operating systems Android and iOS. As an example, the mobile application "Student's Portfolio of Knastu".

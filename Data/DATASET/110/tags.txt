@@ -1,0 +1,1 @@
+КОМПЬЮТЕРНАЯ БЕЗОПАСНОСТЬ, КРИПТОГРАФИЯ, МНОГОМЕРНАЯ КРИПТОГРАФИЯ, ЦИФРОВАЯ ПОДПИСЬ, ОТКРЫТОЕ ШИФРОВАНИЕ, ВЕКТОРНЫЕ КОНЕЧНЫЕ ПОЛЯ, COMPUTER SECURITY, CRYPTOGRAPHY, MULTIVARIATE CRYPTOGRAPHY, DIGITAL SIGNATURE, PUBLIC ENCRYPTION, VECTOR FINITE FIELDS

@@ -1,0 +1,2 @@
+	
+ТРАНСПОРТНАЯ НАГРУЗКА, ИНТЕНСИВНОСТЬ ДВИЖЕНИЯ, МОДУЛЬ УПРУГОСТИ, КАТЕГОРИЯ ДОРОГИ, ДОРОЖНАЯ ОДЕЖДА, ТОЛЩИНА СЛОЯ ПОКРЫТИЯ, TRAFFIC LOAD, TRAFFIC INTENSITY, ELASTIC MODULUS, ROAD CATEGORY, ROAD PAVEMENT, THICKNESS OF A COATING LAYER

@@ -1,0 +1,4 @@
+	
+В статье рассмотрены преимущества и особенности разработки кроссплатформенных приложений с использованием фреймворка «React Native»
+
+This article examines advantages and features of development of cross-platform applications with the use of «React Native» framework.

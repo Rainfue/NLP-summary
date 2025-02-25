@@ -1,0 +1,2 @@
+веб-технологии, серверный рендеринг, SPA, SEO, JavaScript, React,
+Next.js, Remix.

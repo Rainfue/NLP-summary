@@ -1,0 +1,1 @@
+РАСПОЗНАВАНИЕ ЛИЦ, OPENCV, МЕТОД ВИОЛЫ-ДЖОНСА, АЛГОРИТМ FISHERFACE, МЕТОД ГЛАВНЫХ КОМПОНЕНТ, FACE RECOGNITION, VIOLA-JONES METHOD, FISHERFACE ALGORITHM, PRINCIPAL COMPONENT METHOD

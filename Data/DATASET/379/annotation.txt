@@ -1,0 +1,3 @@
+Статья посвящена обзору существующих методов написания и организации CSS кода при программировании веб-сайтов.
+
+The article is devoted to the review of existing methods of writing and organizing CSS code when programming websites.

@@ -1,0 +1,4 @@
+Статья посвящена разбору случаев, нуждающихся в оптимизации в связи с неоправданной нагрузкой на устройство пользователя и возможностей их решения при помощи хуков функциональных компонентов библиотеки React JS.
+
+The article is devoted to the analysis of cases that need optimization due to the unjustified load on the user's device and the possibilities of solving them using hooks of the functional components of the React JS library.
+

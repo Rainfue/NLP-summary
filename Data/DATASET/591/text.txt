@@ -1,0 +1,235 @@
+Эта программа на языке Python использует библиотеку Turtle для создания
+графических изображений, которые представляют собой клавиатуру и ноутбук на
+столе, а также стикмена с ногами и руками. Программа начинается с импорта
+библиотеки Turtle и создания экземпляра объекта turtle. Затем черепаха перемещается
+в нужные позиции и начинает рисование каждого элемента с помощью методов, таких
+как forward() для рисования линий и begin_fill()/end_fill() для закрашивания областей.
+Программа начинается с отрисовки прямоугольника клавиатуры и оранжевого
+прямоугольника для корпуса ноутбука. Затем черепаха рисует корпус клавиатуры и
+тачпад, а затем стикмена с ногами и руками. В конце программы черепаха рисует стол
+и ноги стола.
+В начале программы мы импортируем библиотеку turtle и создаем экземпляр
+объекта turtle. Затем мы устанавливаем скорость движения черепахи на максимальное
+значение, задаем толщину линии рисования равной 4, перемещаем черепаху в
+начальную позицию и начинаем рисование.
+import turtle
+t =turtle
+t.speed(0)
+t.pensize(4)
+turtle.penup()
+После этого начинаем с рисования прямоугольника клавиатуры, перемещаем
+черепаху в нужную позицию и рисуем каждую из сторон прямоугольника, поворачивая
+черепаху на 90 градусов после каждой отрисовки стороны.
+turtle.goto(-75, 200)
+turtle.pendown()
+t.forward(150)
+t.right(90)
+Затем мы рисуем оранжевый прямоугольник, который представляет собой корпус
+ноутбука. Мы устанавливаем толщину линии рисования на 3, перемещаем черепаху в
+нужную позицию и начинаем закрашивание внутренней области с помощью метода
+begin_fill(). Затем мы рисуем каждую сторону оранжевого прямоугольника,
+поворачивая черепаху на 90 градусов после каждой отрисовки стороны. После
+отрисовки закрашиваем внутреннюю область с помощью метода end_fill().
+turtle.forward(100)
+t.right(90)
+turtle.forward(150)
+t.right(90)
+turtle.forward(100)
+t.pensize(3)
+turtle.penup()
+turtle.goto(-70, 195)
+turtle.pendown()
+t.begin_fill()
+t.fillcolor("orange")
+t.right(90)
+t.forward(140)
+t.right(90)
+turtle.forward(90)
+t.right(90)
+turtle.forward(140)
+t.right(90)
+turtle.forward(90)
+t.end_fill()
+t.pensize(4)
+Затем мы рисуем корпус клавиатуры. Перемещаем черепаху в нужную позицию и
+начинаем рисовать каждую сторону, поворачивая черепаху на нужный угол после
+каждой отрисовки. Затем мы рисуем тачпад, перемещая черепаху в нужную позицию
+и отрисовывая каждую сторону с нужным поворотом.
+turtle.penup()
+turtle.goto(-75, 100)
+turtle.pendown()
+t.right(45)
+turtle.backward(70)
+t.right(45)
+turtle.forward(247)
+t.left(135)
+t.forward(70)
+t.right(135)
+turtle.penup()
+turtle.goto(-65, 93)
+turtle.pendown()
+turtle.forward(130)
+t.right(45)
+turtle.forward(30)
+t.right(135)
+turtle.forward(170)
+turtle.penup()
+turtle.goto(-65, 93)
+turtle.pendown()
+t.left(45)
+turtle.forward(30)
+t.left(135)
+t.pensize(2)
+turtle.penup()
+turtle.goto(-67, 88)
+turtle.pendown()
+turtle.forward(135)
+turtle.penup()
+turtle.goto(-75, 83)
+turtle.pendown()
+turtle.forward(150)
+turtle.penup()
+turtle.goto(-78, 78)
+turtle.pendown()
+turtle.forward(160)
+t.right(140)
+s = -55
+d = 5
+c = 30
+for i in range(4):
+ d = d+2
+ t.left(d)
+ turtle.penup()
+ turtle.goto(s, 93)
+ s= s+10
+ turtle.pendown()
+ turtle.forward(c)
+ c = c - 5
+c = 15
+for i in range(4):
+ d = d-2
+ t.left(d)
+ turtle.penup()
+ turtle.goto(s, 93)
+ s= s+10
+ turtle.pendown()
+ turtle.forward(c)
+ c = c + 3
+c = 24
+for i in range(3):
+ d = d+1
+ t.left(d)
+ turtle.penup()
+ turtle.goto(s, 93)
+ s= s+10
+ turtle.pendown()
+ turtle.forward(c)
+ c = c + 3
+t.right(2)
+turtle.penup()
+turtle.goto(55, 93)
+s= s+10
+turtle.pendown()
+turtle.forward(30)
+t.left(49)
+t.pensize(4)
+Затем рисуем стикмена с ногами и руками, перемещая черепаху в нужную
+позицию и рисуя круг для головы и части тела, а также ноги и руки.
+turtle.penup()
+turtle.goto(-19, 64)
+turtle.pendown()
+turtle.forward(40)
+t.right(45)
+turtle.forward(18)
+t.right(135)
+turtle.forward(68)
+t.right(135)
+turtle.forward(20)
+turtle.penup()
+turtle.goto(4, 170)
+turtle.pendown()
+turtle.circle(10)
+turtle.penup()
+turtle.goto(0, 165)
+turtle.pendown()
+t.right(135)
+turtle.forward(30)
+Наконец, мы рисуем стол и ноги стола. Мы перемещаем черепаху в нужную
+позицию и начинаем рисовать каждую сторону, поворачивая черепаху на нужный угол
+после каждой отрисовки. После отрисовки ног стола программа завершено.
+t.right(45)
+turtle.forward(25)
+turtle.backward(25)
+t.left(110)
+turtle.forward(25)
+turtle.backward(25)
+t.right(65)
+turtle.backward(20)
+t.right(90)
+turtle.forward(10)
+t.right(55)
+turtle.forward(15)
+turtle.penup()
+turtle.goto(0, 155)
+turtle.pendown()
+t.right(125)
+turtle.forward(10)
+t.right(55)
+turtle.forward(15)
+turtle.penup()
+turtle.goto(-78, 135)
+turtle.pendown()
+t.right(125)
+turtle.forward(100)
+t.left(45)
+turtle.forward(260)
+t.left(135)
+turtle.forward(720)
+turtle.penup()
+turtle.goto(78, 135)
+turtle.pendown()
+turtle.forward(100)
+t.right(45)
+turtle.forward(260)
+t.right(45)
+turtle.penup()
+turtle.goto(-308, -50)
+turtle.pendown()
+turtle.forward(150)
+t.left(90)
+turtle.forward(30)
+t.left(90)
+turtle.forward(150)
+turtle.penup()
+turtle.goto(-262, -50)
+turtle.pendown()
+t.right(180)
+turtle.forward(75)
+t.left(90)
+turtle.forward(25)
+t.left(90)
+turtle.forward(75)
+turtle.penup()
+turtle.goto(288, -50)
+turtle.pendown()
+t.right(180)
+turtle.forward(150)
+t.left(90)
+turtle.forward(30)
+t.left(90)
+turtle.forward(150)
+turtle.penup()
+turtle.goto(248, -50)
+turtle.pendown()
+t.right(180)
+turtle.forward(75)
+t.left(90)
+turtle.forward(25)
+t.left(90)
+turtle.forward(75)
+В результате создается графическое изображение которая показано на рисунке 1.
+Рисунок 1. графическое изображение
+Заключение.
+Таким образом, программа использует библиотеку Turtle для создания
+графических изображений и демонстрирует базовые принципы рисования на языке
+Python.
