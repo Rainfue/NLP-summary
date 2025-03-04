@@ -202,7 +202,8 @@ def reorganize_dataset(dataset_path: str):
                 })
 
     return samples
-    
+
+# --------------------------------------------------------------------------   
 #
 def split_dataset(samples):
     # создаем словарь для датасета
@@ -225,3 +226,45 @@ def split_dataset(samples):
         split: Dataset.from_list(data[split])
         for split in ['train', 'validation', 'test']
     })
+
+# --------------------------------------------------------------------------
+# функция для фильтрации
+def df_filter(df: pd.DataFrame, 
+              column: str, 
+              upper: float = 0.95, 
+              lower: float = 0.05):
+    '''
+    Функция для фильтрации датасета по квартилям
+    =======
+        **Args**:
+            - df (pd.DataFrame): датасет для фильтрации
+            - column (str): название колонки
+            - upper (float = 0.95) верхний квартиль
+            - lower (float = 0.05) нижний квартиль
+        **Returns**:
+            - filtered_df (pd.DataFrame): отфильтрованный датасет
+    
+    Пример использования:
+    ===
+
+    ```python
+    >>  from function import df_filter
+    >> 
+    >>  for column in df.columns:
+    >>      if 'int64' == df[column].dtype:
+    >>          filtered_df = df_filter(filtered_df, column)
+
+    ```
+    '''
+    # верхняя граница
+    upper_bound = df[column].quantile(upper)
+    # нижняя граница
+    lower_bound = df[column].quantile(lower)
+
+    # фильтрую датасет
+    filtered_df = df[
+        (df[column] >= lower_bound) & (df[column] <=upper_bound)
+    ]
+    
+    # возвращаем отфильтрованный датасет
+    return filtered_df.dropna()
