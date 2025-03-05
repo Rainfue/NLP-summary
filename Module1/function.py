@@ -38,6 +38,9 @@ import random
 # для работы с датасетами
 from datasets import Dataset, DatasetDict
 
+# для обработки текста
+from pymystem3 import Mystem
+
 # Реализация функций
 # --------------------------------------------------------------------------
 
@@ -59,7 +62,7 @@ def generate_wordcoud(text: str, color: str = 'black'):
 # --------------------------------------------------------------------------
 
 # функция для чистки стоп слов
-def clean_text(text: str, stop_words: set):
+def clean_text(text: str, stop_words: set) -> str:
     '''
     Функция для чистки текста от стоп слов
         Args:
@@ -68,13 +71,43 @@ def clean_text(text: str, stop_words: set):
         Returns:
             - отфильтрованный текст (str)
     '''
-    # создаем список слов используя split()
+     # создаем список слов используя split()
     words = text.split()
     # фильтруем слова используя заданное множество
     filtered_words = [word for word in words if word.lower() not in stop_words]
     # возвращаем почищенный текст
     return ' '.join(filtered_words)
 # --------------------------------------------------------------------------
+
+# функция для лемматизации предложения
+def text_lemmatize(text: str, mystem: Mystem) -> str:
+    '''
+    Функция для лемматизации текста
+        Args:
+            - text (str): текст в строковом формате
+            - mystem (Mystem): объект лемматизации из библиотеки pymystem3
+
+        Returns:
+            - processed_text (str): обработанный текст в строковом формате
+    
+    Пример использования:
+
+    ```python
+    >>  from pymystem3 import Mystem
+    >> 
+    >> # объект Mystem
+    >> mystem = Mystem()
+    >> 
+    >>  print(text_lemmatize('мама мыла раму', mystem))
+    ```
+    ```Вывод:
+    мама мыть рама
+    ```
+    '''
+        
+    return ''.join(mystem.lemmatize(text.strip()))
+# --------------------------------------------------------------------------
+
 
 # функция для построения графиков
 def see_distribution(data_stats: dict, 
@@ -204,7 +237,7 @@ def reorganize_dataset(dataset_path: str):
     return samples
 
 # --------------------------------------------------------------------------   
-#
+# функция для разделения датасета на выборки
 def split_dataset(samples):
     # создаем словарь для датасета
     data = {'train': [], 'validation': [], 'test': []}
@@ -268,3 +301,6 @@ def df_filter(df: pd.DataFrame,
     
     # возвращаем отфильтрованный датасет
     return filtered_df.dropna()
+
+# --------------------------------------------------------------------------
+
