@@ -41,6 +41,22 @@ from datasets import Dataset, DatasetDict
 # для обработки текста
 from pymystem3 import Mystem
 
+# для использования видеокарты
+import torch
+
+# для работы с трансформерами
+from transformers import T5ForConditionalGeneration, T5Tokenizer
+
+
+# --------------------------------------------------------------------------
+# скачиваем стоп-слова для русского языка
+nltk.download('stopwords')
+stop_words = set(stopwords.words('russian'))
+# объект для лемматизации
+mystem = Mystem()
+# устройство для вычисления
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 # Реализация функций
 # --------------------------------------------------------------------------
 
@@ -303,4 +319,139 @@ def df_filter(df: pd.DataFrame,
     return filtered_df.dropna()
 
 # --------------------------------------------------------------------------
+# функция для соединения абзацев текста
+def remove_empty_line(text: str) -> str:
+    '''
+    Функция для удаления пустых слов в тексте
+        Args: 
+            - text (str): текст для убирания пустых строк
+        Returns:
+            - str: текст с убранными пустыми строками
+    '''
+    # разделяем текст на строки
+    lines = [line for line in text.splitlines() if line.strip() != '']
+    # оставляем только не пустые строки
 
+    return ' '.join(lines)
+
+# --------------------------------------------------------------------------
+# функция для обработки входящего текста
+def get_input(text: str) -> str:
+    '''Ф-я'''
+    # убираю пустые строки
+    text = remove_empty_line(text)
+    # убираю стоп-слова
+    text = text_lemmatize(clean_text(text, stop_words), mystem)
+    return text
+     
+# --------------------------------------------------------------------------
+# функция для суммаризации
+def get_summary(text: str, 
+                tokenizer: T5Tokenizer, 
+                model: T5ForConditionalGeneration, 
+                device: torch.device | str = device,
+                show_output: bool = False) -> str:
+    '''
+    **Функция для суммаризации текста**
+    ==
+        **Args:**
+            - **text** (`str`): входной текст для суммаризации 
+            - **tokenizer** (`T5Tokenizer`): токенизатор для модели
+            - **model** (`T5ForConditionalGeneration`): модель для суммаризации
+            - **device** (`torch.device`): устройство для вычислений
+            - **show_output** (`bool`): метка для показа результатов внутри функции
+        
+        **Returns:**
+            - **str**: суммаризация входного текста
+
+
+    Пример использования:
+    ====
+
+    ```python
+    >> from function import get_summary
+    >> 
+    >> model = T5ForConditionalGeneration.from_pretrained("./saved_model")
+    >> tokenizer = T5Tokenizer.from_pretrained("./saved_model")
+    >> 
+    >> text = "yout text for summary"
+    >> 
+    >> get_summary(text=text,
+    >>             tokenizer=tokenizer,
+    >>             model=model,
+    >>             device='cuda',
+    >>             show_output=True,
+    >>             )
+    >>             
+    >>  # данный код выведет суммаризацию для вашего текста
+        
+    '''
+
+    # обработка ошибок
+    # если неправильно передан текст
+    if not isinstance(text, str):
+        raise TypeError(f'Текст (text) должен быть в формате str. Сейчас: {type(text)}')
+    
+    # если неправильно передан токенизатор
+    if not isinstance(tokenizer, T5Tokenizer):
+        raise TypeError(f'Токенизатор (tokenizer) должен быть в формате transformer.T5Tokenizer. Сейчас: {type(tokenizer)}')
+    
+    # если неправильно передана модель
+    if not isinstance(model, T5ForConditionalGeneration):
+        raise TypeError(f'Модель (model) должна быть в формате transformer.T5ForConditionalGeneration. Сейчас: {type(model)}')
+    
+    # если неправильно передано вычислительное устройство
+    if not isinstance(device, (torch.device, str)):
+        raise TypeError(f'Устройство (device) должен быть в формате torch.device или str. Сейчас: {type(device)}')
+    
+    # если неправильно передана метка показа результатов
+    if not isinstance(show_output, bool):
+        raise TypeError(f'show_output должен быть в формате bool (True или False). Сейчас: {type(show_output)}')
+    
+    # обработка того, как был передан device
+    else:
+        match type(device):
+            case str():
+                # проверка значения переменной
+                if device == 'cpu' or device == 'cuda':
+                    # если значение подходит
+                    device = torch.device(device)
+                # если значение не подходит:
+                else:
+                    raise ValueError(f'Устройство (device) должен быть "cuda" или "cpu", не {device}')
+            case torch.device:
+                device = device
+
+    # обрабатываем входящий текст
+    input_text = get_input(text)
+    # получаем токены входящего текста
+    input_ids = tokenizer(input_text, return_tensors='pt').input_ids.to(device)
+    # генерируем суммаризацию
+    outputs = model.generate(
+                            input_ids=input_ids,
+                            max_length=500,
+                            num_beams=5,
+                            temperature=0.7,
+                            top_k=100,
+                            top_p=0.95,
+                            do_sample=True,
+                            repetition_penalty=1.2,
+                            no_repeat_ngram_size=3,
+                            num_return_sequences=3,
+                            early_stopping=True
+                        )
+    # декодируем получившийся текст
+    gen_summary = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    # выводим результат (если указано)
+    if show_output:
+        # вывод входного текста
+        print(f'>> Original Text: {text}')
+        # вывод сгенерированного изложения
+        print(f'\n\n\n>> Generated summary: {gen_summary}')
+        # возвращем суммаризацию
+        return gen_summary
+    
+    # если нет, возвращаем суммаризацию без вывода
+    else:
+        return gen_summary
