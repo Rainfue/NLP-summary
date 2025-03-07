@@ -41,6 +41,14 @@ from datasets import Dataset, DatasetDict
 # для обработки текста
 from pymystem3 import Mystem
 
+
+# --------------------------------------------------------------------------
+# скачиваем стоп-слова для русского языка
+nltk.download('stopwords')
+stop_words = set(stopwords.words('russian'))
+# объект для лемматизации
+mystem = Mystem()
+
 # Реализация функций
 # --------------------------------------------------------------------------
 
@@ -303,4 +311,28 @@ def df_filter(df: pd.DataFrame,
     return filtered_df.dropna()
 
 # --------------------------------------------------------------------------
+# функция для соединения абзацев текста
+def remove_empty_line(text: str) -> str:
+    '''
+    Функция для удаления пустых слов в тексте
+        Args: 
+            - text (str): текст для убирания пустых строк
+        Returns:
+            - str: текст с убранными пустыми строками
+    '''
+    # разделяем текст на строки
+    lines = [line for line in text.splitlines() if line.strip() != '']
+    # оставляем только не пустые строки
 
+    return ' '.join(lines)
+
+# --------------------------------------------------------------------------
+# функция для обработки входящего текста
+def get_input(text: str) -> str:
+    '''Ф-я'''
+    # убираю пустые строки
+    text = remove_empty_line(text)
+    # убираю стоп-слова
+    text = text_lemmatize(clean_text(text, stop_words), mystem)
+    return text
+     
