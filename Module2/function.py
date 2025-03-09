@@ -340,7 +340,7 @@ def get_input(text: str) -> str:
     '''Ф-я'''
     # убираю пустые строки
     text = remove_empty_line(text)
-    # убираю стоп-слова
+    # убираю стоп-слова 
     text = text_lemmatize(clean_text(text, stop_words), mystem)
     return text
      
