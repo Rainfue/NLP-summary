@@ -2,15 +2,23 @@ import streamlit as st
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 from function import *
 import torch
+import os       # TODO убрать позже
+# путь к папке с сохраненной моделью и токенизатором
+model_path = '../Module1/saved_model'
+model_path2 = 'saved_model'
+# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cpu')
+
 
 # Загрузка моделей
 @st.cache_resource
 def load_summarization_model():
     # Загрузка модели
-    model = T5ForConditionalGeneration.from_pretrained("Module2/saved_model")
-    model.to(torch.device('cuda' if torch.cuda.is_available() else 'cpu'))
+    model = T5ForConditionalGeneration.from_pretrained(model_path)
+    model.to(device)
     # Загрузка токенизатора
-    tokenizer = T5Tokenizer.from_pretrained("Module2/saved_model")
+    tokenizer = T5Tokenizer.from_pretrained(model_path)
+
     return model, tokenizer
 
 # @st.cache_resource
@@ -39,8 +47,10 @@ article_text = st.text_area("Введите текст статьи:")
 if st.button("Суммаризировать"):
     model, tokenizer = load_summarization_model()
 
-    summary = get_summary(article_text, tokenizer, model)
-    print(summary)
+
+    summary = get_summary(article_text, tokenizer, model, device)
+
+
     st.write(summary)
 
 # Сравнение статей

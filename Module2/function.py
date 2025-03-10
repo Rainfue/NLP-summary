@@ -430,7 +430,8 @@ def get_summary(text: str,
     outputs = model.generate(
                             input_ids=input_ids,
                             max_length=500,
-                            num_beams=5,
+                            min_length=50,
+                            num_beams=7,
                             temperature=0.7,
                             top_k=100,
                             top_p=0.95,
@@ -448,7 +449,7 @@ def get_summary(text: str,
         # вывод входного текста
         print(f'>> Original Text: {text}')
         # вывод сгенерированного изложения
-        print(f'\n\n\n>> Generated summary: {gen_summary}')
+        print(f'\n\n>> Generated summary: {gen_summary}')
         # возвращем суммаризацию
         return gen_summary
     
