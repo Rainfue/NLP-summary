@@ -22,7 +22,8 @@ from tqdm import tqdm
 import nltk
 # модуль со стоп словами
 from nltk.corpus import stopwords
-
+# токенизатор слов
+from nltk.tokenize import word_tokenize
 # для создания облаков слов
 from wordcloud import WordCloud
 
@@ -47,10 +48,17 @@ import torch
 # для работы с трансформерами
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 
+# модель и объект для поиска схожести текстов
+from gensim.models.doc2vec import Doc2Vec, TaggedDocument
+
+# метрика косинусной схожести
+from sklearn.metrics.pairwise import cosine_similarity
 
 # --------------------------------------------------------------------------
 # скачиваем стоп-слова для русского языка
 nltk.download('stopwords')
+# пунктуация 
+nltk.download('punkt')
 stop_words = set(stopwords.words('russian'))
 # объект для лемматизации
 mystem = Mystem()
@@ -123,7 +131,6 @@ def text_lemmatize(text: str, mystem: Mystem) -> str:
         
     return ''.join(mystem.lemmatize(text.strip()))
 # --------------------------------------------------------------------------
-
 
 # функция для построения графиков
 def see_distribution(data_stats: dict, 
@@ -456,3 +463,49 @@ def get_summary(text: str,
     # если нет, возвращаем суммаризацию без вывода
     else:
         return gen_summary
+    
+# --------------------------------------------------------------------------
+# функция для сравнения двух текстов
+def get_similarity(text1: str, text2: str, model: str | Doc2Vec):
+    '''
+    Функция для получения схожести двух текстов
+    ===
+        Args:
+            - text1 (str): первый текст в строковом формате
+            - text2 (str): второй текст в строковом формате
+            - model (str|Doc2Vec): модель в формате doc2vec объекта 
+                                  либо путь к ней в строковом формате
+
+        Returns:
+            - float: сходство между текстами (от 1 до -1)
+    '''
+    # проверка формата текста 1
+    if not isinstance(text1, str):
+        raise TypeError(f'text1 должен быть в строковом формате, а не {type(text1)}')
+    # проверка формата текста 2
+    if not isinstance(text1, str):
+        raise TypeError(f'text1 должен быть в строковом формате, а не {type(text1)}')
+    # проверка формата модели
+    if not isinstance(model, (str, Doc2Vec)):
+        raise TypeError(f'model должна быть в формате Doc2Vec, либо в виде строкового путя, а не {type(model)}')
+    # если модель в виде путя
+    if type(model) == str:
+        # проверяем, что файл существует
+        if os.path.exists(model):
+            # пробуем загрузить модель через try: except
+            try:
+                # загружаем модель из файла
+                model = Doc2Vec.load(model)
+            # если не получилось загрузить, выводим ошибку
+            except Exception as e:
+                raise ValueError(f'Ошибка! не удалось загрузить модель, проверьте ваш файл!\n{e}')
+        # если путь не существует:
+        else:
+            # выводим ошибку
+            raise ValueError('Ошибка! Файла с моделью не существует, проверьте правильность написания!')
+    
+    # вычисляем эмбеддинг
+    inferred_vector1 = model.infer_vector(word_tokenize(text1.lower())).reshape(1,-1)
+    inferred_vector2 = model.infer_vector(word_tokenize(text2.lower())).reshape(1,-1)
+    # получаем сходство
+    return cosine_similarity(inferred_vector1, inferred_vector2).item()
