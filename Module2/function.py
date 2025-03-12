@@ -54,6 +54,13 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 # метрика косинусной схожести
 from sklearn.metrics.pairwise import cosine_similarity
 
+# импортирование библиотек
+from scipy.spatial import distance
+from sentence_transformers import SentenceTransformer
+
+# для передачи функции как параметр
+from typing import Callable
+
 # --------------------------------------------------------------------------
 # скачиваем стоп-слова для русского языка
 nltk.download('stopwords')
@@ -64,6 +71,8 @@ stop_words = set(stopwords.words('russian'))
 mystem = Mystem()
 # устройство для вычисления
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# предобученая модель для сравнения статей
+model_similarity = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Реализация функций
 # --------------------------------------------------------------------------
@@ -346,7 +355,7 @@ def remove_empty_line(text: str) -> str:
 def get_input(text: str) -> str:
     '''Ф-я'''
     # убираю пустые строки
-    text = remove_empty_line(text)
+    text = remove_empty_line(text).lower()
     # убираю стоп-слова 
     text = text_lemmatize(clean_text(text, stop_words), mystem)
     return text
@@ -437,7 +446,7 @@ def get_summary(text: str,
     outputs = model.generate(
                             input_ids=input_ids,
                             max_length=500,
-                            # min_length=50,
+                            min_length=20,
                             num_beams=5,
                             temperature=0.7,
                             top_k=100,
@@ -466,7 +475,11 @@ def get_summary(text: str,
     
 # --------------------------------------------------------------------------
 # функция для сравнения двух текстов
-def get_similarity(text1: str, text2: str, model: str | Doc2Vec):
+def get_similarity(text1: str, 
+                   text2: str, 
+                   model: str | Doc2Vec, 
+                   prep_flag: bool = True, 
+                   preprocess: Callable[[str], str] = get_input):
     '''
     Функция для получения схожести двух текстов
     ===
@@ -503,9 +516,58 @@ def get_similarity(text1: str, text2: str, model: str | Doc2Vec):
         else:
             # выводим ошибку
             raise ValueError('Ошибка! Файла с моделью не существует, проверьте правильность написания!')
-    
+    # если стоит метка о обработке данных
+    if prep_flag:
+        text1 = preprocess(text1)
+        text2 = preprocess(text2)
     # вычисляем эмбеддинг
-    inferred_vector1 = model.infer_vector(word_tokenize(text1.lower())).reshape(1,-1)
-    inferred_vector2 = model.infer_vector(word_tokenize(text2.lower())).reshape(1,-1)
-    # получаем сходство
+    inferred_vector1 = model.infer_vector(word_tokenize(text1)).reshape(1,-1)
+    inferred_vector2 = model.infer_vector(word_tokenize(text2),).reshape(1,-1)
+    # # получаем сходство
     return cosine_similarity(inferred_vector1, inferred_vector2).item()
+
+# --------------------------------------------------------------------------
+# функция для извлечения эмбеддингов из всего датасета
+def extract_all_embeddings(dataset, part, column, model: Doc2Vec):
+    df = pd.DataFrame(columns=['summary', 'embedding'])
+    # проходимся по каждой суммаризации в датасете
+    for i in tqdm(range(len(dataset[part])), desc='Извлечение эмбеддингов..', unit='text'):
+        # получаем суммаризацию
+        summary = dataset[part][column][i]
+        # получаем эмбеддинг
+        embedding = model.infer_vector(word_tokenize(get_input(summary))).reshape(1,-1)
+        # сохраняем эмбеддинг
+        df.loc[i] = [summary, embedding]
+    df.head()
+
+# функция для поиска топ 3 схожих статей
+def find_top_similar(df: pd.DataFrame, text: str, model: Doc2Vec, top_n: int = 3) -> pd.DataFrame:
+    """
+    Находит топ-N наиболее схожих эмбеддингов и их summary.
+
+    Параметры:
+        df (pd.DataFrame): Датафрейм с колонками 'summary' и 'embedding'.
+        input_embedding (np.ndarray): Входной эмбеддинг для сравнения.
+        top_n (int): Количество наиболее схожих результатов (по умолчанию 3).
+
+    Возвращает:
+        pd.DataFrame: Датафрейм с топ-N наиболее схожими эмбеддингами и их summary.
+    """
+    # получаем эмбеддинг
+    input_embedding = model.infer_vector(word_tokenize(get_input(text))).reshape(1,-1)
+    # список всех схожестей
+    similarities = []
+    # проходимся по всему датафрейму
+    for i in tqdm(range(df.shape[0]), desc='Высчитываем схожести..', unit='summary'):
+        similarities.append(cosine_similarity(input_embedding, df['embedding'].loc[i]).item()*100)
+    # Добавляем столбец с косинусной схожестью в датафрейм
+    df['similarity'] = similarities
+    
+    # Сортируем датафрейм по убыванию схожести и выбираем топ-N
+    top_similar = df.sort_values(by='similarity', ascending=False).head(3)
+    summaries = top_similar['summary'].tolist()
+    top_similarities = [round(sim, 2) for sim in top_similar['similarity'].tolist()]
+    headers = [' '.join(word_tokenize(summary)[3:10]) for summary in summaries]
+
+    # Возвращаем только нужные колонки
+    return top_similarities, headers
