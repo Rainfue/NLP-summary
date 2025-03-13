@@ -94,6 +94,7 @@ def generate_wordcoud(text: str, color: str = 'black'):
     plt.show()                                          # вывод изображения
 # --------------------------------------------------------------------------
 
+# --------------------------------------------------------------------------   
 # функция для чистки стоп слов
 def clean_text(text: str, stop_words: set) -> str:
     '''
@@ -353,11 +354,12 @@ def remove_empty_line(text: str) -> str:
 # --------------------------------------------------------------------------
 # функция для обработки входящего текста
 def get_input(text: str) -> str:
-    '''Ф-я'''
+    '''Функция для обработки входящего текста'''
     # убираю пустые строки
     text = remove_empty_line(text).lower()
-    # убираю стоп-слова 
+    # убираю стоп-слова и лемматизирую
     text = text_lemmatize(clean_text(text, stop_words), mystem)
+    # возвращаю обработанный текст
     return text
      
 # --------------------------------------------------------------------------
@@ -551,7 +553,7 @@ def find_top_similar(df: pd.DataFrame, text: str, model: Doc2Vec, top_n: int = 3
         top_n (int): Количество наиболее схожих результатов (по умолчанию 3).
 
     Возвращает:
-        pd.DataFrame: Датафрейм с топ-N наиболее схожими эмбеддингами и их summary.
+        tuple
     '''
     # получаем эмбеддинг
     input_embedding = model.infer_vector(word_tokenize(get_input(text))).reshape(1,-1)
