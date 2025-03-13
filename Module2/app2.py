@@ -86,7 +86,7 @@ if similarity_button:
                     model=model_similarity,
                 )
                 # выводим топ 3 самых похожих статей
-                st.bar_chart(top_similarities)
+                st.bar_chart(dict(zip(headers, top_similarities)))
 
             # получаем суммаризацию второй статьи
             with col2:
@@ -99,6 +99,9 @@ if similarity_button:
                     text=summary2,
                     model=model_similarity,
                 )
+                # выводим топ 3 самых похожих статей
+                st.bar_chart(dict(zip(headers, top_similarities)))
+
 
             similarity = get_similarity(summary1, summary2, model_similarity)
             st.write(f'Схожесть статей: {similarity*100:.2f}%')

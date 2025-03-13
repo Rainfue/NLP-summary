@@ -542,7 +542,7 @@ def extract_all_embeddings(dataset, part, column, model: Doc2Vec):
 
 # функция для поиска топ 3 схожих статей
 def find_top_similar(df: pd.DataFrame, text: str, model: Doc2Vec, top_n: int = 3) -> pd.DataFrame:
-    """
+    '''
     Находит топ-N наиболее схожих эмбеддингов и их summary.
 
     Параметры:
@@ -552,13 +552,13 @@ def find_top_similar(df: pd.DataFrame, text: str, model: Doc2Vec, top_n: int = 3
 
     Возвращает:
         pd.DataFrame: Датафрейм с топ-N наиболее схожими эмбеддингами и их summary.
-    """
+    '''
     # получаем эмбеддинг
     input_embedding = model.infer_vector(word_tokenize(get_input(text))).reshape(1,-1)
     # список всех схожестей
     similarities = []
     # проходимся по всему датафрейму
-    for i in tqdm(range(df.shape[0]), desc='Высчитываем схожести..', unit='summary'):
+    for i in range(df.shape[0]):
         similarities.append(cosine_similarity(input_embedding, df['embedding'].loc[i]).item()*100)
     # Добавляем столбец с косинусной схожестью в датафрейм
     df['similarity'] = similarities
@@ -567,7 +567,7 @@ def find_top_similar(df: pd.DataFrame, text: str, model: Doc2Vec, top_n: int = 3
     top_similar = df.sort_values(by='similarity', ascending=False).head(3)
     summaries = top_similar['summary'].tolist()
     top_similarities = [round(sim, 2) for sim in top_similar['similarity'].tolist()]
-    headers = [' '.join(word_tokenize(summary)[3:10]) for summary in summaries]
+    headers = [' '.join(word_tokenize(summary)) for summary in summaries]
 
     # Возвращаем только нужные колонки
     return top_similarities, headers
