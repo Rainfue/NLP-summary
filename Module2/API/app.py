@@ -6,6 +6,8 @@ import streamlit as st
 import torch
 # вспомогательные функции
 from backend import Realization
+# для логирования времени
+from time import time
 
 summarization_path = 'Module2/saved_model'      # путь к модели суммаризации
 similarity_path = 'Module2/doc2vec.model'       # путь к модели сравнения
@@ -19,7 +21,9 @@ class MyGUI:
         '''
         Иициализация приложения
         '''
+        # устройство вычисления
         self.device = device
+        # объект реализации
         self.realizer = Realization(summarization_path, similarity_path, df_path, device)
         # заголовок приложения
         self.title = st.title(r'$$\text{Приложение для сравнения статей}$$', 
@@ -53,6 +57,8 @@ class MyGUI:
 
         # обработка нажатия кнопки
         if self.compare_button:
+            # запоминаем стартовое время
+            start_time = time()
             # проверяем заполнены ли обе статьи
             if self.text_area1 and self.text_area2:
                 # выводим значок загрузки
@@ -61,25 +67,10 @@ class MyGUI:
                     summary1 = self.realizer.get_summary(self.text_area1)
                     summary2 = self.realizer.get_summary(self.text_area2)
 
-                    self.similarity = self.realizer.get_similarity(summary1, summary2)
-                    st.write(f'Схожесть статей: {self.similarity*100:.2f}%')
-
-
-                    if self.similarity:
-                        # Столбчатая диаграмма
-                        st.bar_chart(
-                            [[self.similarity*100, 100]], 
-                            x_label='Схожесть', 
-                            color=['#4bd4ff', '#0E1117'], 
-                            stack="layered", 
-                            horizontal=True, 
-                            use_container_width=True
-                    )
-
                 # вывод результатов
                 with self.col1:
                     # выводим суммаризацию
-                    st.write(summary1)
+                    st.write_stream(self.realizer.stream_data(summary1))
                     # выводим топ 3 наиболее похожих статей
                     top_sims, headers = self.realizer.find_top_similar(
                         self.realizer.dataframe,
@@ -92,7 +83,7 @@ class MyGUI:
 
                 with self.col2:
                     # выводим суммаризацию
-                    st.write(summary2)
+                    st.write_stream(self.realizer.stream_data(summary2))
                     # выводим топ 3 наиболее похожих статей
                     top_sims, headers = self.realizer.find_top_similar(
                         self.realizer.dataframe,
@@ -101,10 +92,25 @@ class MyGUI:
                     )
                     # визуализируем результат
                     st.bar_chart(dict(zip(headers, top_sims)))
-
+                    
+                # подсчет сходства
+                self.similarity = self.realizer.get_similarity(summary1, summary2)
+                st.write(f'Схожесть статей: {self.similarity*100:.2f}%')
+                if self.similarity:
+                    # Столбчатая диаграмма
+                    st.bar_chart(
+                        [[self.similarity*100, 100]], 
+                        x_label='Схожесть', 
+                        color=['#4bd4ff', '#0E1117'], 
+                        stack="layered", 
+                        horizontal=True, 
+                        use_container_width=True
+                )
+                # вывод затраченного времени
+                st.write_stream(self.realizer.stream_data(f'Время инференса: {(time()-start_time):.2f}s'))
 
             # если введены не оба текста
-            else:
+            else: 
                 # выводим предупреждения
                 st.warning('Пожалуйста, введите текст в оба поля.', icon='⚠️')
 

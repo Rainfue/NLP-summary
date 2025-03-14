@@ -26,6 +26,9 @@ import pandas as pd
 # для работы с файлами
 import os
 
+# для работы с временем
+from time import sleep
+
 # создаем класс суммаризации
 class Realization:
     # инициализатор
@@ -147,6 +150,14 @@ class Realization:
         # возвращаем новый текст
         return ' '.join(lines)
     
+    # функция для создания потокового текста
+    @staticmethod
+    def stream_data(text: str):
+        '''Функция для создания потокового текста'''
+        for word in text.split():
+            yield word + ' '
+            sleep(0.02)
+            
     # функция для лемматизации предложения
     def text_lemmatize(self, text: str) -> str:
         '''
@@ -185,7 +196,7 @@ class Realization:
         text = self.text_lemmatize(
             self.clean_text(text)
             )
-        # # возвращаю обработанный текст
+        # возвращаю обработанный текст
         return text
     
     # --------------------------------------------------------------------------
@@ -208,21 +219,21 @@ class Realization:
         ====
 
         ```python
-        >> from function import get_summary
-        >> 
-        >> model = T5ForConditionalGeneration.from_pretrained("./saved_model")
-        >> tokenizer = T5Tokenizer.from_pretrained("./saved_model")
-        >> 
-        >> text = "yout text for summary"
-        >> 
-        >> get_summary(text=text,
-        >>             tokenizer=tokenizer,
-        >>             model=model,
-        >>             device='cuda',
-        >>             show_output=True,
-        >>             )
-        >>             
-        >>  # данный код выведет суммаризацию для вашего текста
+        >>> from function import get_summary
+        >>> 
+        >>> model = T5ForConditionalGeneration.from_pretrained("./saved_model")
+        >>> tokenizer = T5Tokenizer.from_pretrained("./saved_model")
+        >>> 
+        >>> text = "yout text for summary"
+        >>> 
+        >>> get_summary(text=text,
+        >>>             tokenizer=tokenizer,
+        >>>             model=model,
+        >>>             device='cuda',
+        >>>             show_output=True,
+        >>>             )
+        >>>             
+        >>>  # данный код выведет суммаризацию для вашего текста
             
         '''
         # обработка ошибок
@@ -234,25 +245,23 @@ class Realization:
         if not isinstance(show_output, bool):
             raise TypeError(f'show_output должен быть в формате bool (True или False). Сейчас: {type(show_output)}')
 
-
         # обрабатываем входящий текст
         input_text = self.get_input(text)
         # получаем токены входящего текста
         input_ids = self.tokenizer(input_text, return_tensors='pt').input_ids.to(self.device)
         # генерируем суммаризацию
         outputs = self.summarization.generate(
-                                input_ids=input_ids,
-                                max_length=500,
-                                min_length=20,
-                                num_beams=5,
-                                temperature=0.7,
-                                top_k=100,
-                                top_p=0.95,
-                                do_sample=True,
-                                repetition_penalty=1.2,
-                                no_repeat_ngram_size=3,
-                                num_return_sequences=3,
-                                early_stopping=True
+                                input_ids=input_ids,        # токенизированый входной текст
+                                max_length=100,             # максимальная длина генерированной последовательности
+                                min_length=10,              # минимальная длина генерированной последовательности
+                                num_beams=2,                # количество лучей для поиска с использованием Beam Search
+                                do_sample=False,            # ограничивает вариативность
+                                repetition_penalty=1.2,     # штраф за повторение токенов
+                                no_repeat_ngram_size=3,     # запрещает повторение n-грамм указанного размера
+                                num_return_sequences=1,     # количество возвращаемых последовательностей
+                                early_stopping=True,        # генерация остановится, как только завершаться гипотезы
+                                use_cache=True,             # использование кэширования для ускорения генерации
+                                length_penalty=0.8,         # штраф за длину в beam search
                             )
         # декодируем получившийся текст
         gen_summary = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
@@ -285,6 +294,8 @@ class Realization:
             Args:
                 - text1 (str): первый текст в строковом формате
                 - text2 (str): второй текст в строковом формате
+                - prep_flag (bool = True): флаг, нужна ли обработка входного текста
+                - preprocess (func(str) -> str: = lambda x: x): функция для обработки текста
 
             Returns:
                 - float: сходство между текстами (от 1 до -1)
@@ -293,8 +304,14 @@ class Realization:
         if not isinstance(text1, str):
             raise TypeError(f'text1 должен быть в строковом формате, а не {type(text1)}')
         # проверка формата текста 2
-        if not isinstance(text1, str):
+        if not isinstance(text2, str):
             raise TypeError(f'text1 должен быть в строковом формате, а не {type(text1)}')
+        # проверка формата флага для обработки
+        if not isinstance(prep_flag, bool):
+            raise TypeError(f'prep_flag должен быть в булевом формате, а не {type(prep_flag)}')
+        # проверка формата функции обработки текста
+        if not isinstance(preprocess, Callable):
+            raise TypeError(f'preprocess должна быть ф-ей, принимающей и возвращающей str')
 
         # если стоит метка о обработке данных
         if prep_flag:
@@ -344,5 +361,6 @@ class Realization:
 
         # Возвращаем только нужные колонки
         return top_similarities, headers
+
 
 
