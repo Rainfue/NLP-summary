@@ -481,19 +481,21 @@ def get_summary(text: str,
     
 # --------------------------------------------------------------------------
 # функция для сравнения двух текстов
-def get_similarity(text1: str, 
-                   text2: str, 
-                   model: str | Doc2Vec, 
-                   prep_flag: bool = True, 
-                   preprocess: Callable[[str], str] = get_input):
+def get_similarity(
+    self,
+    text1: str, 
+    text2: str, 
+    prep_flag: bool = True, 
+    preprocess: Callable[[str], str] = get_input
+            ):
     '''
     Функция для получения схожести двух текстов
     ===
         Args:
             - text1 (str): первый текст в строковом формате
             - text2 (str): второй текст в строковом формате
-            - model (str|Doc2Vec): модель в формате doc2vec объекта 
-                                  либо путь к ней в строковом формате
+            - prep_flag (bool = True): флаг, нужна ли обработка входного текста
+            - preprocess (func(str) -> str: = lambda x: x): функция для обработки текста
 
         Returns:
             - float: сходство между текстами (от 1 до -1)
@@ -502,33 +504,22 @@ def get_similarity(text1: str,
     if not isinstance(text1, str):
         raise TypeError(f'text1 должен быть в строковом формате, а не {type(text1)}')
     # проверка формата текста 2
-    if not isinstance(text1, str):
+    if not isinstance(text2, str):
         raise TypeError(f'text1 должен быть в строковом формате, а не {type(text1)}')
-    # проверка формата модели
-    if not isinstance(model, (str, Doc2Vec)):
-        raise TypeError(f'model должна быть в формате Doc2Vec, либо в виде строкового путя, а не {type(model)}')
-    # если модель в виде путя
-    if type(model) == str:
-        # проверяем, что файл существует
-        if os.path.exists(model):
-            # пробуем загрузить модель через try: except
-            try:
-                # загружаем модель из файла
-                model = Doc2Vec.load(model)
-            # если не получилось загрузить, выводим ошибку
-            except Exception as e:
-                raise ValueError(f'Ошибка! не удалось загрузить модель, проверьте ваш файл!\n{e}')
-        # если путь не существует:
-        else:
-            # выводим ошибку
-            raise ValueError('Ошибка! Файла с моделью не существует, проверьте правильность написания!')
+    # проверка формата флага для обработки
+    if not isinstance(prep_flag, bool):
+        raise TypeError(f'prep_flag должен быть в булевом формате, а не {type(prep_flag)}')
+    # проверка формата функции обработки текста
+    if not isinstance(preprocess, Callable):
+        raise TypeError(f'preprocess должна быть ф-ей, принимающей и возвращающей str')
+
     # если стоит метка о обработке данных
     if prep_flag:
-        text1 = preprocess(text1)
-        text2 = preprocess(text2)
+        text1 = preprocess(self, text1)
+        text2 = preprocess(self, text2)
     # вычисляем эмбеддинг
-    inferred_vector1 = model.infer_vector(word_tokenize(text1)).reshape(1,-1)
-    inferred_vector2 = model.infer_vector(word_tokenize(text2),).reshape(1,-1)
+    inferred_vector1 = self.similarity.infer_vector(word_tokenize(text1)).reshape(1,-1)
+    inferred_vector2 = self.similarity.infer_vector(word_tokenize(text2),).reshape(1,-1)
     # # получаем сходство
     return cosine_similarity(inferred_vector1, inferred_vector2).item()
 
@@ -570,7 +561,7 @@ def find_top_similar(df: pd.DataFrame, text: str, model: Doc2Vec, top_n: int = 3
     df['similarity'] = similarities
     
     # Сортируем датафрейм по убыванию схожести и выбираем топ-N
-    top_similar = df.sort_values(by='similarity', ascending=False).head(3)
+    top_similar = df.sort_values(by='similarity', ascending=False).head(top_n)
     summaries = top_similar['summary'].tolist()
     top_similarities = [round(sim, 2) for sim in top_similar['similarity'].tolist()]
     headers = [' '.join(word_tokenize(summary)) for summary in summaries]

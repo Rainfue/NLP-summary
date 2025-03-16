@@ -163,7 +163,7 @@ class Realization:
         for word in text.split():
             yield word + ' '
             sleep(0.02)
-            
+
     # функция для лемматизации предложения
     def text_lemmatize(self, text: str) -> str:
         '''
@@ -252,23 +252,27 @@ class Realization:
             raise TypeError(f'show_output должен быть в формате bool (True или False). Сейчас: {type(show_output)}')
 
         # обрабатываем входящий текст
-        input_text = self.get_input(text)
+        input_text = self.get_input(text[10000])
         # получаем токены входящего текста
         input_ids = self.tokenizer(input_text, return_tensors='pt').input_ids.to(self.device)
-        # генерируем суммаризацию
-        outputs = self.summarization.generate(
-                                input_ids=input_ids,        # токенизированый входной текст
-                                max_length=100,             # максимальная длина генерированной последовательности
-                                min_length=10,              # минимальная длина генерированной последовательности
-                                num_beams=2,                # количество лучей для поиска с использованием Beam Search
-                                do_sample=False,            # ограничивает вариативность
-                                repetition_penalty=1.2,     # штраф за повторение токенов
-                                no_repeat_ngram_size=3,     # запрещает повторение n-грамм указанного размера
-                                num_return_sequences=1,     # количество возвращаемых последовательностей
-                                early_stopping=True,        # генерация остановится, как только завершаться гипотезы
-                                use_cache=True,             # использование кэширования для ускорения генерации
-                                length_penalty=0.8,         # штраф за длину в beam search
-                            )
+        # освобождаем память перед генерацией
+        torch.cuda.empty_cache()
+        # отключаю расчет градиентов
+        with torch.no_grad():
+            # генерируем суммаризацию
+            outputs = self.summarization.generate(
+                                    input_ids=input_ids,        # токенизированый входной текст
+                                    max_length=100,             # максимальная длина генерированной последовательности
+                                    min_length=10,              # минимальная длина генерированной последовательности
+                                    num_beams=2,                # количество лучей для поиска с использованием Beam Search
+                                    do_sample=False,            # ограничивает вариативность
+                                    repetition_penalty=1.2,     # штраф за повторение токенов
+                                    no_repeat_ngram_size=3,     # запрещает повторение n-грамм указанного размера
+                                    num_return_sequences=1,     # количество возвращаемых последовательностей
+                                    early_stopping=True,        # генерация остановится, как только завершаться гипотезы
+                                    use_cache=True,             # использование кэширования для ускорения генерации
+                                    length_penalty=0.8,         # штраф за длину в beam search
+                                )
         # декодируем получившийся текст
         gen_summary = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
 
@@ -335,16 +339,15 @@ class Realization:
             self,
             df: pd.DataFrame, 
             text: str, 
-            model: Doc2Vec, 
             top_n: int = 3
             ) -> pd.DataFrame:
         '''
         Находит топ-N наиболее схожих эмбеддингов и их summary.
 
         Параметры:
-            df (pd.DataFrame): Датафрейм с колонками 'summary' и 'embedding'.
-            input_embedding (np.ndarray): Входной эмбеддинг для сравнения.
-            top_n (int): Количество наиболее схожих результатов (по умолчанию 3).
+            - df (pd.DataFrame): Датафрейм с колонками 'summary' и 'embedding'.
+            - input_embedding (np.ndarray): Входной эмбеддинг для сравнения.
+            - top_n (int): Количество наиболее схожих результатов (по умолчанию 3).
 
         Возвращает:
             pd.DataFrame: Датафрейм с топ-N наиболее схожими эмбеддингами и их summary.

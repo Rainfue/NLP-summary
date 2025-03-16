@@ -4,7 +4,7 @@
 import streamlit as st
 # для работы с cuda
 import torch
-# вспомогательные функции
+# объект реализации
 from backend import Realization
 # для логирования времени
 from time import time
@@ -47,10 +47,10 @@ class MyGUI:
         '''
         # поля для ввода текста
         with self.col1:
-            self.text_area1 = st.text_area('**Введите первую статью**', height=150)
+            self.text_area1 = st.text_area('**Введите первую статью**', height=150, max_chars=10000)
         # поля для ввода текста
         with self.col2:
-            self.text_area2 = st.text_area('**Введите вторую статью**', height=150)
+            self.text_area2 = st.text_area('**Введите вторую статью**', height=150, max_chars=10000)
 
         # кнопка сравнения
         self.compare_button = st.button('**Сравнить**')
