@@ -441,24 +441,28 @@ def get_summary(text: str,
                 device = device
 
     # обрабатываем входящий текст
-    input_text = get_input(text)
+    input_text = get_input(text)[:10000]
     # получаем токены входящего текста
     input_ids = tokenizer(input_text, return_tensors='pt').input_ids.to(device)
-    # генерируем суммаризацию
-    outputs = model.generate(
-                            input_ids=input_ids,
-                            max_length=500,
-                            min_length=20,
-                            num_beams=5,
-                            temperature=0.7,
-                            top_k=100,
-                            top_p=0.95,
-                            do_sample=True,
-                            repetition_penalty=1.2,
-                            no_repeat_ngram_size=3,
-                            num_return_sequences=3,
-                            early_stopping=True
-                        )
+    # освобождаем память перед генерацией
+    torch.cuda.empty_cache()
+    # отключаю расчет градиентов
+    with torch.no_grad():
+        # генерируем суммаризацию
+        outputs = model.generate(
+                                input_ids=input_ids,
+                                max_length=500,
+                                min_length=20,
+                                num_beams=5,
+                                temperature=0.7,
+                                top_k=100,
+                                top_p=0.95,
+                                do_sample=True,
+                                repetition_penalty=1.2,
+                                no_repeat_ngram_size=3,
+                                num_return_sequences=3,
+                                early_stopping=True
+                            )
     # декодируем получившийся текст
     gen_summary = tokenizer.decode(outputs[0], skip_special_tokens=True)
 

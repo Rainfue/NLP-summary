@@ -7,6 +7,8 @@ from transformers import T5Tokenizer, T5ForConditionalGeneration
 # для модели сравнения
 from gensim.models.doc2vec import Doc2Vec
 
+# библиотека для nlp
+import nltk
 # модуль со стоп словами
 from nltk.corpus import stopwords
 # токенизатор слов
@@ -28,6 +30,10 @@ import os
 
 # для работы с временем
 from time import sleep
+
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('punkt_tab')
 
 # создаем класс суммаризации
 class Realization:
