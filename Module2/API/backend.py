@@ -252,7 +252,9 @@ class Realization:
             raise TypeError(f'show_output должен быть в формате bool (True или False). Сейчас: {type(show_output)}')
 
         # обрабатываем входящий текст
-        input_text = self.get_input(text[10000])
+        if len(text) > 10000:
+            input_text = self.get_input(text[10000])
+        input_text = self.get_input(text)
         # получаем токены входящего текста
         input_ids = self.tokenizer(input_text, return_tensors='pt').input_ids.to(self.device)
         # освобождаем память перед генерацией
@@ -264,14 +266,14 @@ class Realization:
                                     input_ids=input_ids,        # токенизированый входной текст
                                     max_length=100,             # максимальная длина генерированной последовательности
                                     min_length=10,              # минимальная длина генерированной последовательности
-                                    num_beams=2,                # количество лучей для поиска с использованием Beam Search
+                                    num_beams=1,                # количество лучей для поиска с использованием Beam Search
                                     do_sample=False,            # ограничивает вариативность
-                                    repetition_penalty=1.2,     # штраф за повторение токенов
+                                    repetition_penalty=2.5,     # штраф за повторение токенов
                                     no_repeat_ngram_size=3,     # запрещает повторение n-грамм указанного размера
                                     num_return_sequences=1,     # количество возвращаемых последовательностей
-                                    early_stopping=True,        # генерация остановится, как только завершаться гипотезы
+                                    # early_stopping=True,        # генерация остановится, как только завершаться гипотезы
                                     use_cache=True,             # использование кэширования для ускорения генерации
-                                    length_penalty=0.8,         # штраф за длину в beam search
+                                    length_penalty=1.0,         # штраф за длину в beam search
                                 )
         # декодируем получившийся текст
         gen_summary = self.tokenizer.decode(outputs[0], skip_special_tokens=True)

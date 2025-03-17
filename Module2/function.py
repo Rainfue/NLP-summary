@@ -450,18 +450,17 @@ def get_summary(text: str,
     with torch.no_grad():
         # генерируем суммаризацию
         outputs = model.generate(
-                                input_ids=input_ids,
-                                max_length=500,
-                                min_length=20,
-                                num_beams=5,
-                                temperature=0.7,
-                                top_k=100,
-                                top_p=0.95,
-                                do_sample=True,
-                                repetition_penalty=1.2,
-                                no_repeat_ngram_size=3,
-                                num_return_sequences=3,
-                                early_stopping=True
+                                input_ids=input_ids,        # токенизированый входной текст
+                                max_length=100,             # максимальная длина генерированной последовательности
+                                min_length=10,              # минимальная длина генерированной последовательности
+                                num_beams=1,                # количество лучей для поиска с использованием Beam Search
+                                do_sample=False,            # ограничивает вариативность
+                                repetition_penalty=2.5,     # штраф за повторение токенов
+                                no_repeat_ngram_size=3,     # запрещает повторение n-грамм указанного размера
+                                num_return_sequences=1,     # количество возвращаемых последовательностей
+                                early_stopping=True,        # генерация остановится, как только завершаться гипотезы
+                                use_cache=True,             # использование кэширования для ускорения генерации
+                                length_penalty=1.0,         # штраф за длину в beam search
                             )
     # декодируем получившийся текст
     gen_summary = tokenizer.decode(outputs[0], skip_special_tokens=True)
@@ -482,7 +481,7 @@ def get_summary(text: str,
 # --------------------------------------------------------------------------
 # функция для сравнения двух текстов
 def get_similarity(
-    self,
+    model_sim: Doc2Vec, 
     text1: str, 
     text2: str, 
     prep_flag: bool = True, 
@@ -515,11 +514,11 @@ def get_similarity(
 
     # если стоит метка о обработке данных
     if prep_flag:
-        text1 = preprocess(self, text1)
-        text2 = preprocess(self, text2)
+        text1 = preprocess(text1)
+        text2 = preprocess(text2)
     # вычисляем эмбеддинг
-    inferred_vector1 = self.similarity.infer_vector(word_tokenize(text1)).reshape(1,-1)
-    inferred_vector2 = self.similarity.infer_vector(word_tokenize(text2),).reshape(1,-1)
+    inferred_vector1 = model_sim.infer_vector(word_tokenize(text1)).reshape(1,-1)
+    inferred_vector2 = model_sim.infer_vector(word_tokenize(text2),).reshape(1,-1)
     # # получаем сходство
     return cosine_similarity(inferred_vector1, inferred_vector2).item()
 

@@ -74,8 +74,7 @@ class MyGUI:
                     # выводим топ 3 наиболее похожих статей
                     top_sims, headers = self.realizer.find_top_similar(
                         self.realizer.dataframe,
-                        summary1,
-                        self.realizer.similarity
+                        summary1
                     )
                     # визуализируем результат
                     st.bar_chart(dict(zip(headers, top_sims)))
@@ -87,8 +86,7 @@ class MyGUI:
                     # выводим топ 3 наиболее похожих статей
                     top_sims, headers = self.realizer.find_top_similar(
                         self.realizer.dataframe,
-                        summary2,
-                        self.realizer.similarity
+                        summary2
                     )
                     # визуализируем результат
                     st.bar_chart(dict(zip(headers, top_sims)))
