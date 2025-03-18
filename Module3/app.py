@@ -10,7 +10,7 @@ from backend import Realization
 from time import time
 
 summarization_path = 'Module3/saved_model'      # путь к модели суммаризации
-similarity_path = 'Module3/doc2vec.model'       # путь к модели сравнения
+similarity_path = 'Module3/doc2vec_e50_w2_mc1_dw0_dm1_.model'       # путь к модели сравнения
 df_path = 'Module3/all_embs.pkl'                # путь к датафрейму с эмбеддингами
 # девайс (CUDA или CPU)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
