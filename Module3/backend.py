@@ -49,6 +49,9 @@ class Realization:
         # обработка девайса
         # если девайс задан:
         if device:
+            # если неправильный формат
+            if not isinstance(device, (str, torch.device)):
+                raise TypeError(f'device должен быть в строковом формате, а не {type(device)}')
             # проверяем на формат
             match type(device):
                 case str():
@@ -68,7 +71,7 @@ class Realization:
         # обработка неправильных значений путя к модели суммаризации
         # проверка формата
         if not isinstance(summarization_path, str):
-            raise TypeError(f'model_path должен быть в строковом формате, а не {type(model_path)}')
+            raise TypeError(f'model_path должен быть в строковом формате, а не {type(summarization_path)}')
         # проверка путя
         if os.path.exists(summarization_path):
             # пробуем открыть модель и токенизатор
@@ -86,7 +89,7 @@ class Realization:
         # обработка неправильных значений путя к модели сравнения
         # проверка формата
         if not isinstance(similiarity_path, str):
-            raise TypeError(f'model_path должен быть в строковом формате, а не {type(model_path)}')
+            raise TypeError(f'summarization_path должен быть в строковом формате, а не {type(similiarity_path)}')
         # проверка путя
         if os.path.exists(similiarity_path):
             # пробуем открыть модель 
@@ -103,7 +106,7 @@ class Realization:
         # обрабатываю путь к датафрейму
         # проверка на формат
         if not isinstance(df_path, str):
-            raise TypeError(f'model_path должен быть в строковом формате, а не {type(model_path)}')
+            raise TypeError(f'df_path должен быть в строковом формате, а не {type(df_path)}')
         # если неверный формат
         else:
             # проверка на существование

@@ -68,7 +68,7 @@ class Realization:
         # обработка неправильных значений путя к модели суммаризации
         # проверка формата
         if not isinstance(summarization_path, str):
-            raise TypeError(f'model_path должен быть в строковом формате, а не {type(model_path)}')
+            raise TypeError(f'model_path должен быть в строковом формате, а не {type(summarization_path)}')
         # проверка путя
         if os.path.exists(summarization_path):
             # пробуем открыть модель и токенизатор
@@ -86,7 +86,7 @@ class Realization:
         # обработка неправильных значений путя к модели сравнения
         # проверка формата
         if not isinstance(similiarity_path, str):
-            raise TypeError(f'model_path должен быть в строковом формате, а не {type(model_path)}')
+            raise TypeError(f'model_path должен быть в строковом формате, а не {type(similiarity_path)}')
         # проверка путя
         if os.path.exists(similiarity_path):
             # пробуем открыть модель 
