@@ -262,20 +262,24 @@ def split_dataset(samples):
 
 # --------------------------------------------------------------------------
 # функция для фильтрации
-def df_filter(df: pd.DataFrame, 
-              column: str, 
+def df_filter(df: pd.DataFrame,
               upper: float = 0.95, 
-              lower: float = 0.05):
+              lower: float = 0.05,
+              max_text_length: int = 10000,
+              text_columns: list = None):
     '''
-    Функция для фильтрации датасета по квартилям
+    Функция для фильтрации датасета по квартилям и обрезки текстов
     =======
         **Args**:
             - df (pd.DataFrame): датасет для фильтрации
-            - column (str): название колонки
-            - upper (float = 0.95) верхний квартиль
-            - lower (float = 0.05) нижний квартиль
+            - column (str): название колонки для фильтрации по квартилям
+            - upper (float = 0.95): верхний квартиль
+            - lower (float = 0.05): нижний квартиль
+            - max_text_length (int = 10000): максимальная длина текста
+            - text_columns (list = None): список колонок с текстами для обрезки
+            
         **Returns**:
-            - filtered_df (pd.DataFrame): отфильтрованный датасет
+            - filtered_df (pd.DataFrame): отфильтрованный датасет с обрезанными текстами
     
     Пример использования:
     ===
@@ -283,24 +287,51 @@ def df_filter(df: pd.DataFrame,
     ```python
     >>  from function import df_filter
     >> 
+    >>  # Фильтрация по квартилям и обрезка текстов
+    >>  filtered_df = df_filter(df, 'text_words', text_columns=['text', 'summary'])
+    >>
+    >>  # Только фильтрация по квартилям для числовых колонок
     >>  for column in df.columns:
     >>      if 'int64' == df[column].dtype:
     >>          filtered_df = df_filter(filtered_df, column)
-
     ```
     '''
-    # верхняя граница
-    upper_bound = df[column].quantile(upper)
-    # нижняя граница
-    lower_bound = df[column].quantile(lower)
+    # логирование
+    print(f'Размер датасета до: {df.shape}')
+    # копируем датасет
+    filtered_df = df.copy(deep=True)
+    # проходимся по каждой колонке в датафрейме
+    for column in filtered_df.columns:
+    # проверяем тип данных в таблице
+        if filtered_df[column].dtype == 'int64':
+            # верхняя граница
+            upper_bound = filtered_df[column].quantile(upper)
+            # нижняя граница
+            lower_bound = filtered_df[column].quantile(lower)
 
-    # фильтрую датасет
-    filtered_df = df[
-        (df[column] >= lower_bound) & (df[column] <=upper_bound)
-    ]
+            # фильтрую датасет
+            filtered_df = filtered_df[
+                (filtered_df[column] >= lower_bound) & (filtered_df[column] <= upper_bound)
+            ]
     
+    # Обрезка текстов, если указаны текстовые колонки
+    if text_columns:
+        for text_col in text_columns:
+            if text_col in filtered_df.columns:
+                # Создаем копию датафрейма для безопасного изменения
+                filtered_df = filtered_df.copy()
+                # Обрезаем тексты, которые длиннее max_text_length
+                filtered_df[text_col] = filtered_df[text_col].apply(
+                    lambda x: x[:max_text_length] if isinstance(x, str) and len(x) > max_text_length else x
+                )
+                
+                
+    # убираем нули, если они есть         
+    filtered_df = filtered_df.dropna()
+    # логирование
+    print(f'Размер датасета после: {filtered_df.shape}')
     # возвращаем отфильтрованный датасет
-    return filtered_df.dropna()
+    return filtered_df
 
 # --------------------------------------------------------------------------
 

@@ -504,7 +504,7 @@ def get_similarity(
         raise TypeError(f'text1 должен быть в строковом формате, а не {type(text1)}')
     # проверка формата текста 2
     if not isinstance(text2, str):
-        raise TypeError(f'text1 должен быть в строковом формате, а не {type(text1)}')
+        raise TypeError(f'text2 должен быть в строковом формате, а не {type(text2)}')
     # проверка формата флага для обработки
     if not isinstance(prep_flag, bool):
         raise TypeError(f'prep_flag должен быть в булевом формате, а не {type(prep_flag)}')

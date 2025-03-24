@@ -7,3 +7,6 @@ Module2/model-4-summary
 Module2/__pycache__
 Module3/saved_model/model.safetensors
 Module2/API/__pycache__/backend.cpython-311.pyc
+Module2/model-4-summary_cpu/checkpoint-59/model.safetensors
+Module2/model-4-summary_cpu/checkpoint-59/optimizer.pt
+Module2/saved_model_cpu/model.safetensors
